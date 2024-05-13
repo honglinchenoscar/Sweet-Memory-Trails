@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sweet Memory Trails</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Hide overflow to prevent scrolling */
+    background-image: url('map.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    position: absolute; /* Set position to absolute */
+    width: 200px; /* Set width to 200px */
+    height: 200px; /* Set height to 200px */
+    overflow: hidden; /* Hide overflowing content */
+  }
+
+  .hover-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px; /* Set width to 200px */
+    height: 200px; /* Set height to 200px */
+    z-index: 1; /* Ensure hover area is above the background */
+  }
+
+  .hover-area:hover + .hover-content {
+    display: block;
+  }
+
+  .hover-content {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .paw-print {
+    width: 8px; /* Set width of the paw print */
+    height: 8px; /* Set height of the paw print */
+    background-image: url('Dog_Paw_Print.png'); /* Set background image */
+    background-size: contain; /* Make sure the image fits within the paw print dimensions */
+    position: absolute; /* Set the position to absolute */
+    pointer-events: none; /* Make the paw print not interactable */
+    transition: opacity 1s ease, transform 1s ease; /* Add transition for smoother effect */
+  }
+
+  /* Style for cropped videos */
+  .cropped-video,
+  .cropped-image {
+    object-fit: cover; /* Crop the video */
+    width: 100%; /* Set width to 100% */
+    height: 100%; /* Set height to 100% */
+    border-radius: 1000px; /* Add border radius */
+  }
+</style>
+</head>
+<body>
+
+<!-- Add 4 cropped videos with corresponding hover areas -->
+<div class="container" style="top: 55%; left: 16%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video1 cropped-video" src="1.mp4" muted loop></video>
+</div>
+
+<div class="container" style="top: 40%; left: 80%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video2 cropped-video" src="2.mp4" muted loop></video>
+</div>
+
+<div class="container" style="top: 40%; left: 85%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video3 cropped-video" src="3.mp4" muted loop></video>
+</div>
+
+<div class="container" style="top: 50%; left: 86%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video4 cropped-video" src="4.mp4" muted loop></video>
+</div>
+
+<!-- Add 6 videos with corresponding hover areas -->
+<div class="container" style="top: 45%; left: 60%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video5 cropped-video" src="5.mp4" muted loop></video>
+</div>
+
+<div class="container" style="top: 55%; left: 69%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video6 cropped-video" src="6.mp4" muted loop></video>
+</div>
+
+<div class="container" style="top: 75%; left: 5%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video7 cropped-video" src="7.mp4" muted loop></video>
+</div>
+
+<div class="container" style="top: 40%; left: 50%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video8 cropped-video" src="8.mp4" muted loop></video>
+</div>
+
+<div class="container" style="top: 50%; left: 70%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video9 cropped-video" src="9.mp4" muted loop></video>
+</div>
+
+<div class="container" style="top: 35%; left: 75%;">
+  <div class="hover-area"></div>
+  <video class="hover-content video10 cropped-video" src="10.mp4" muted loop></video>
+</div>
+
+<script>
+  // Hide the default cursor
+  document.body.style.cursor = 'none';
+
+  // Create an array to store the paw prints
+  const pawPrints = [];
+
+  // Function to create a paw print at a specific position
+  function createPawPrint(x, y, prevX, prevY) {
+    const pawPrint = document.createElement('div');
+    pawPrint.className = 'paw-print';
+    const angle = Math.atan2(y - prevY, x - prevX) * (180 / Math.PI); // Calculate the angle between current and previous positions
+    pawPrint.style.left = x + 'px';
+    pawPrint.style.top = y + 'px';
+    pawPrint.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg)`; // Rotate the paw print
+    document.body.appendChild(pawPrint);
+    pawPrints.push(pawPrint);
+
+    // Gradually decrease the opacity of the paw print until it fades away
+    let opacity = 1;
+    const fadeInterval = setInterval(() => {
+      opacity -= 0.05; // Decrease opacity by 0.05 in each interval
+      pawPrint.style.opacity = opacity;
+      if (opacity <= 0) {
+        clearInterval(fadeInterval);
+        pawPrint.remove(); // Remove the paw print from the DOM after fading out completely
+      }
+    }, 200); // Interval duration in milliseconds
+  }
+
+  let prevX = 0;
+  let prevY = 0;
+  let lastPrintTime = 0;
+  const printDelay = 200; // Delay between prints in milliseconds
+
+  // Update the cursor position on mouse move and create a paw print
+  document.addEventListener('mousemove', (e) => {
+    const currentTime = new Date().getTime();
+    if (currentTime - lastPrintTime > printDelay) {
+      const x = e.pageX;
+      const y = e.pageY;
+      createPawPrint(x, y, prevX, prevY);
+      prevX = x;
+      prevY = y;
+      lastPrintTime = currentTime;
+    }
+  });
+
+  // Start playing video on hover
+  const videos = document.querySelectorAll('.hover-content');
+  videos.forEach(video => {
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.then(_ => {
+        // Autoplay started
+      }).catch(error => {
+        // Autoplay was prevented
+        video.addEventListener('mouseenter', () => {
+          video.play();
+        });
+        video.addEventListener('mouseleave', () => {
+          video.pause();
+          video.currentTime = 0; // Reset video to start
+        });
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
